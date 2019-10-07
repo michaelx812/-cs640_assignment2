@@ -30,7 +30,7 @@ public class Switch extends Device implements Runnable
 		while(true){
 			for(Map.Entry<String,swEntry> entry: this.swTable.entrySet()){
 				long curTime = System.currentTimeMillis();
-				long startTime = entry.getValue().starTime;
+				long startTime = entry.getValue().startTime;
 				if((curTime - startTime)>this.timeout){
 					System.out.println("Timeout entry MAC: "+entry.getKey());
 					this.swTable.remove(entry.getKey());
@@ -63,7 +63,7 @@ public class Switch extends Device implements Runnable
 
 		/********************************************************************/
 		/* TODO: Handle packets                                             */
-		String srcMac = etherPacket.getSourceMac().toString();
+		String srcMac = etherPacket.getSourceMAC().toString(); 
 		String dstMac = etherPacket.getDestinationMAC().toString();
 		if(swTable.contains(dstMac)){
 			swEntry entry = swTable.get(dstMac);
@@ -71,7 +71,7 @@ public class Switch extends Device implements Runnable
 			sendPacket(etherPacket, entry.inIface);
 		}else{
 			swEntry entry = new swEntry(System.currentTimeMillis(),inIface);
-			swTable.add(srcMac,entry);
+			swTable.put(srcMac,entry);
 			//broadcast
 			System.out.println("broad casting!");
 			for(Map.Entry<String,Iface> interfaceEntry: this.interfaces.entrySet()){
