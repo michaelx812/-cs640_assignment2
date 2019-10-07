@@ -6,6 +6,7 @@ import edu.wisc.cs.sdn.vnet.DumpFile;
 import edu.wisc.cs.sdn.vnet.Iface;
 
 import java.util.concurrent.*; 
+import java.util.Map;
 
 /**
  * @author Aaron Gember-Jacobson
