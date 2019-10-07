@@ -12,7 +12,7 @@ import java.util.concurrent.*;
  */
 public class Switch extends Device implements Runnable 
 {	
-	ConcurrentHashMap<MACAddress,swEntry> swTable;
+	ConcurrentHashMap<String,swEntry> swTable;
 	protected long timeout = 15000;
 
 	class swEntry{
@@ -27,7 +27,7 @@ public class Switch extends Device implements Runnable
 	@Override
 	public void run(){
 		while(true){
-			for(Map.Entry<MACAddress,swEntry> entry: this.wTable.entrySet()){
+			for(Map.Entry<String,swEntry> entry: this.wTable.entrySet()){
 				long curTime = System.currentTimeMillis();
 				long startTime = entry.getValue().starTime;
 				if((curTime - startTime)>this.timeout){
@@ -44,7 +44,7 @@ public class Switch extends Device implements Runnable
 	public Switch(String host, DumpFile logfile)
 	{
 		super(host,logfile);
-		swTable = new ConcurrentHashMap<MACAddress,swEntry>();
+		swTable = new ConcurrentHashMap<String,swEntry>();
 		Thread thread = new Thread(this);
 		thread.start();
 	}
@@ -62,8 +62,8 @@ public class Switch extends Device implements Runnable
 
 		/********************************************************************/
 		/* TODO: Handle packets                                             */
-		MACAddress srcMac = etherPacket.getSourceMac();
-		MACAddress dstMac = etherPacket.getDestinationMAC();
+		String srcMac = etherPacket.getSourceMac().toString();
+		String dstMac = etherPacket.getDestinationMAC().toString();
 		if(swTable.contains(dstMac)){
 			swEntry entry = swTable.get(dstMac);
 			entry.startTime = System.currentTimeMillis();
