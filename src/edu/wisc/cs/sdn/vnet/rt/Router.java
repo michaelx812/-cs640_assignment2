@@ -87,12 +87,17 @@ public class Router extends Device
 		/********************************************************************/
 		/* TODO: Handle packets                                             */
 		//check if IPv4 Packet, if not drop
-		if(etherPacket.getEtherType() != TYPE_IPv4){
+		if(etherPacket.getEtherType() != Ethernet.TYPE_IPv4){
 			return;
 		}		
 
 		//verify checksum
-		IPv4 ipHeader = (IPv4)etherPacket.getPayload();
+		IPv4 payload = (IPv4)etherPacket.getPayload();
+		short receivedChecksum = payload.getChecksum();
+		payload.setChecksum((short) 0);
+		payload.serialize();
+
+		//decrement TTL 
 		
 		/********************************************************************/
 	}
