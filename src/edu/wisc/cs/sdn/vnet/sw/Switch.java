@@ -65,13 +65,18 @@ public class Switch extends Device implements Runnable
 		/* TODO: Handle packets                                             */
 		String srcMac = etherPacket.getSourceMAC().toString(); 
 		String dstMac = etherPacket.getDestinationMAC().toString();
-		if(swTable.containsKey(dstMac)){
-			swEntry entry = swTable.get(dstMac);
+		if(swTable.containsKey(srcMac)){
+			swEntry entry = swTable.get(srcMac);
 			entry.startTime = System.currentTimeMillis();
-			sendPacket(etherPacket, entry.inIface);
 		}else{
 			swEntry entry = new swEntry(System.currentTimeMillis(),inIface);
 			swTable.put(srcMac,entry);
+		}
+		
+		if(swTable.containsKey(dstMac)){
+			swEntry entry = swTable.get(dstMac);
+			sendPacket(etherPacket, entry.inIface);
+		}else{
 			//broadcast
 			System.out.println("broad casting!");
 			for(Map.Entry<String,Iface> interfaceEntry: this.interfaces.entrySet()){
