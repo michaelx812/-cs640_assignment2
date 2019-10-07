@@ -8,8 +8,12 @@ import edu.wisc.cs.sdn.vnet.Iface;
 /**
  * @author Aaron Gember-Jacobson
  */
-public class Switch extends Device
+public class Switch extends Device implements Runnable 
 {	
+	@Override
+	public void run(){
+		System.out.println("running thread!");
+	}
 	/**
 	 * Creates a router for a specific host.
 	 * @param host hostname for the router
@@ -17,6 +21,8 @@ public class Switch extends Device
 	public Switch(String host, DumpFile logfile)
 	{
 		super(host,logfile);
+		Thread thread = new Thread(this);
+		thread.start();
 	}
 
 	/**
