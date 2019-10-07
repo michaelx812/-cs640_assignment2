@@ -32,7 +32,7 @@ public class Switch extends Device implements Runnable
 				long curTime = System.currentTimeMillis();
 				long startTime = entry.getValue().startTime;
 				if((curTime - startTime)>this.timeout){
-					System.out.println("Timeout entry MAC: "+entry.getKey());
+					//System.out.println("Timeout entry MAC: "+entry.getKey());
 					this.swTable.remove(entry.getKey());
 				}
 			}
@@ -78,7 +78,7 @@ public class Switch extends Device implements Runnable
 			sendPacket(etherPacket, entry.inIface);
 		}else{
 			//broadcast
-			System.out.println("broad casting!");
+			//System.out.println("broad casting!");
 			for(Map.Entry<String,Iface> interfaceEntry: this.interfaces.entrySet()){
 				Iface curIface = interfaceEntry.getValue();
 				if(!curIface.toString().equals(inIface.toString())){

@@ -5,6 +5,7 @@ import edu.wisc.cs.sdn.vnet.DumpFile;
 import edu.wisc.cs.sdn.vnet.Iface;
 
 import net.floodlightcontroller.packet.Ethernet;
+import net.floodlightcontroller.packet.IPv4;
 
 /**
  * @author Aaron Gember-Jacobson and Anubhavnidhi Abhashkumar
@@ -82,9 +83,16 @@ public class Router extends Device
 		System.out.println("*** -> Received packet: " +
                 etherPacket.toString().replace("\n", "\n\t"));
 		
+
 		/********************************************************************/
 		/* TODO: Handle packets                                             */
-		
+		//check if IPv4 Packet, if not drop
+		if(etherPacket.getEtherType() != TYPE_IPv4){
+			return;
+		}		
+
+		//verify checksum
+		IPv4 ipHeader = (IPv4)etherPacket.getPayload();
 		
 		/********************************************************************/
 	}
