@@ -28,7 +28,7 @@ public class Switch extends Device implements Runnable
 	@Override
 	public void run(){
 		while(true){
-			for(Map.Entry<String,swEntry> entry: this.wTable.entrySet()){
+			for(Map.Entry<String,swEntry> entry: this.swTable.entrySet()){
 				long curTime = System.currentTimeMillis();
 				long startTime = entry.getValue().starTime;
 				if((curTime - startTime)>this.timeout){
