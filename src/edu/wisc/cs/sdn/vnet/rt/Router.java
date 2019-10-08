@@ -125,7 +125,7 @@ public class Router extends Device
 
 		//compute the new checksum
 		data = ipPkt.serialize();
-		ipPkt = ipPkt.deserialize(data, 0, data.length);
+		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 
 		//look up dst mac
 		ArpEntry arpEntry;
@@ -136,11 +136,11 @@ public class Router extends Device
 		}
 		if(arpEntry!=null){
 			Ethernet forwardPkt = (Ethernet)etherPacket.setPayload(ipPkt);
-			String srcMac = rtEntry.getInterface.getMacAddress();
-			String dstMac = arpEntry.getMac();
+			String srcMac = rtEntry.getInterface.getMacAddress().toString();
+			String dstMac = arpEntry.getMac().toString();
 			forwardPkt.setSourceMACAddress(srcMac);
 			forwardPkt.setDestinationMACAddress(dstMac);
-			sendPacket(forwarPkt, rtEntry.getInterface());
+			sendPacket(forwardPkt, rtEntry.getInterface());
 		}
 		
 
