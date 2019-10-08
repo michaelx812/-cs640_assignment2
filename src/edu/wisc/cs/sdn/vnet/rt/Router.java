@@ -92,13 +92,60 @@ public class Router extends Device
 		}		
 
 		//verify checksum
-		IPv4 payload = (IPv4)etherPacket.getPayload();
-		short receivedChecksum = payload.getChecksum();
-		payload.setChecksum((short) 0);
-		payload.serialize();
+		IPv4 ipPkt = (IPv4)etherPacket.getPayload();
+		short receivedChecksum = ipPkt.getChecksum();
+		ipPkt.setChecksum((short) 0);
+		byte[] data = ipPkt.serialize();
+		ipPkt = ipPkt.deserialize(data, 0, data.length);
+		if(receivedChecksum!=ipPkt.getChecksum()){
+			return;
+		}
 
-		//decrement TTL 
+		//decrement TTL drop if zero
+		byte ttl = ipPkt.getTtl();
+		if((int)ttl < 1){
+			return;
+		}
+		ipPkt.setTtl((byte)(ttl -1));
+
+		//check if ip equals one of the router's interface, if true then drop
+		for(Map.Entry<String,Iface> interfaceEntry: this.interfaces.entrySet()){
+			if(ipPkt.getDestinationAddress() == interfaceEntry.getValue().getIpAddress()){
+				return;
+			}
+		}
+
+		//get forward routetable entry, if no entry matches, drop
+		RouteEntry rtEntry = routeTable.lookup(ipPkt.getDestinationAddress());
+		if(rtEntry == null){
+			return;
+		}
+
+		//compute the new checksum
+		data = ipPkt.serialize();
+		ipPkt = ipPkt.deserialize(data, 0, data.length);
+
+		//look up dst mac
+		ArpEntry arpEntry;
+		if(rtEntry.getGatewayAddress()==0){
+			arpEntry = arpCache.lookup(ipPkt.getDestinationAddress());
+		}else{
+			arpEntry = arpCache.loopup(rtEntry.getGatewayAddress());
+		}
+		if(arpEntry!=null){
+			Ethernet forwardPkt = etherPacket.setPayload(ipPkt);
+			String srcMac = rtEntry.getInterface.getMacAddress();
+			String dstMac = arpEntry.getMac();
+			forwardPkt.setSourceMACAddress(srcMac);
+			forwardPkt.setDestinationMACAddress(dstMac);
+			sendPacket(forwarPkt, rtEntry.getInterface());
+		}
 		
+
+
+
+
+
 		/********************************************************************/
 	}
 }
