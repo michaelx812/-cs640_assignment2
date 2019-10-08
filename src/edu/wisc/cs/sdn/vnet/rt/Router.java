@@ -7,6 +7,8 @@ import edu.wisc.cs.sdn.vnet.Iface;
 import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
 
+import java.util.Map;
+
 /**
  * @author Aaron Gember-Jacobson and Anubhavnidhi Abhashkumar
  */
@@ -96,7 +98,7 @@ public class Router extends Device
 		short receivedChecksum = ipPkt.getChecksum();
 		ipPkt.setChecksum((short) 0);
 		byte[] data = ipPkt.serialize();
-		ipPkt = ipPkt.deserialize(data, 0, data.length);
+		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 		if(receivedChecksum!=ipPkt.getChecksum()){
 			return;
 		}
@@ -130,10 +132,10 @@ public class Router extends Device
 		if(rtEntry.getGatewayAddress()==0){
 			arpEntry = arpCache.lookup(ipPkt.getDestinationAddress());
 		}else{
-			arpEntry = arpCache.loopup(rtEntry.getGatewayAddress());
+			arpEntry = arpCache.lookup(rtEntry.getGatewayAddress());
 		}
 		if(arpEntry!=null){
-			Ethernet forwardPkt = etherPacket.setPayload(ipPkt);
+			Ethernet forwardPkt = (Ethernet)etherPacket.setPayload(ipPkt);
 			String srcMac = rtEntry.getInterface.getMacAddress();
 			String dstMac = arpEntry.getMac();
 			forwardPkt.setSourceMACAddress(srcMac);
