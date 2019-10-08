@@ -49,7 +49,8 @@ public class RouteTable
 				int entryIP = entry.getDestinationAddress();
 				System.out.println(entry.getDestinationAddress());
 				int bitmask = 0;
-				for(int i = 1; i <=32; i++){
+				int subnetMask = entry.getMaskAddress();
+				for(int i = 1; i <=32 && ((subnetMask & 1<<(32-i))!=0); i++){
 					bitmask = bitmask + (1 << (32-i));
 					if((bitmask&ip) == (bitmask&entryIP)){
 						if(i>currentMatch){
