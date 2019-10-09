@@ -144,7 +144,9 @@ public class Router extends Device
 			System.out.println("find arp entry!");
 			Ethernet forwardPkt = (Ethernet)etherPacket.setPayload(ipPkt);
 			String srcMac = rtEntry.getInterface().getMacAddress().toString();
+			System.out.println("Src MAC: "+srcMac);
 			String dstMac = arpEntry.getMac().toString();
+			System.out.println("Dst MAC: "+dstMac);
 			forwardPkt.setSourceMACAddress(srcMac);
 			forwardPkt.setDestinationMACAddress(dstMac);
 			sendPacket(forwardPkt, rtEntry.getInterface());
