@@ -58,7 +58,7 @@ public class RouteTable
 					}
 					if(curMatch>maxMatch){
 						maxMatch = curMatch;
-						resutl = entry;
+						result = entry;
 					}
 
 				}
