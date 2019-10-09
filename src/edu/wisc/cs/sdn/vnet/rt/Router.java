@@ -141,6 +141,7 @@ public class Router extends Device
 			arpEntry = arpCache.lookup(rtEntry.getGatewayAddress());
 		}
 		if(arpEntry!=null){
+			System.out.println("find arp entry!");
 			Ethernet forwardPkt = (Ethernet)etherPacket.setPayload(ipPkt);
 			String srcMac = rtEntry.getInterface().getMacAddress().toString();
 			String dstMac = arpEntry.getMac().toString();
