@@ -150,6 +150,7 @@ public class Router extends Device
 			forwardPkt.setSourceMACAddress(srcMac);
 			forwardPkt.setDestinationMACAddress(dstMac);
 			System.out.println("Send pkt interface: "+rtEntry.getInterface().toString());
+			System.out.println("Packet: "+forwardPkt.toString());
 			sendPacket(forwardPkt, rtEntry.getInterface());
 		}
 		
