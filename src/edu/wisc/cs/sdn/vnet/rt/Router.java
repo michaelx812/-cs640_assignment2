@@ -90,6 +90,7 @@ public class Router extends Device
 		/* TODO: Handle packets                                             */
 		//check if IPv4 Packet, if not drop
 		if(etherPacket.getEtherType() != Ethernet.TYPE_IPv4){
+			System.out.println("Drop! type is not IPv4");
 			return;
 		}		
 
@@ -100,12 +101,14 @@ public class Router extends Device
 		byte[] data = ipPkt.serialize();
 		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 		if(receivedChecksum!=ipPkt.getChecksum()){
+			System.out.println("Drop! checksum not match");
 			return;
 		}
 
 		//decrement TTL drop if zero
 		byte ttl = ipPkt.getTtl();
 		if((int)ttl < 1){
+			System.out.println("Drop! ttl<1");
 			return;
 		}
 		ipPkt.setTtl((byte)(ttl -1));
@@ -113,6 +116,7 @@ public class Router extends Device
 		//check if ip equals one of the router's interface, if true then drop
 		for(Map.Entry<String,Iface> interfaceEntry: this.interfaces.entrySet()){
 			if(ipPkt.getDestinationAddress() == interfaceEntry.getValue().getIpAddress()){
+				System.out.println("Drop! dst ip == one of the router's interface");
 				return;
 			}
 		}
@@ -120,6 +124,7 @@ public class Router extends Device
 		//get forward routetable entry, if no entry matches, drop
 		RouteEntry rtEntry = routeTable.lookup(ipPkt.getDestinationAddress());
 		if(rtEntry == null){
+			System.out.println("Drop! no matching routing table entry");
 			return;
 		}
 
