@@ -129,6 +129,7 @@ public class Router extends Device
 		}
 
 		//compute the new checksum
+		ipPkt.setChecksum((short) 0);
 		data = ipPkt.serialize();
 		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 
