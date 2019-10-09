@@ -43,23 +43,24 @@ public class RouteTable
 				return null;
 			}
 			RouteEntry result = null;
-			int currentMatch = 0;
+			int maxMatch = 0;
 			System.out.println("entries in the router table:");
 			for (RouteEntry entry : this.entries){
 				int entryIP = entry.getDestinationAddress();
-				System.out.println(entry.getDestinationAddress());
-				int bitmask = 0;
 				int subnetMask = entry.getMaskAddress();
-				for(int i = 1; i <=32 && ((subnetMask & 1<<(32-i))!=0); i++){
-					bitmask = bitmask + (1 << (32-i));
-					if((bitmask&ip) == (bitmask&entryIP)){
-						if(i>currentMatch){
-							currentMatch = i;
-							result = entry;
-						}
-					}else{
-						break;
+				int subnetNum = entryIP & subnetMask;
+				int subnetNum_loopip = ip & subnetMask;
+				if(subnetNum == subnetNum_loopip){
+					int curMatch = 0;
+					while(subnetMask!=0){
+						subnetMask = subnetMask << 1;
+						curMatch ++;
 					}
+					if(curMatch>maxMatch){
+						maxMatch = curMatch;
+						resutl = entry;
+					}
+
 				}
 			}
 			return result;
