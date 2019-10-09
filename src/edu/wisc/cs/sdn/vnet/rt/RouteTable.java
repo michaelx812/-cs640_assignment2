@@ -59,6 +59,7 @@ public class RouteTable
 					if(curMatch>maxMatch){
 						maxMatch = curMatch;
 						result = entry;
+						System.out.println("find match router entry! "+subnetNum);
 					}
 
 				}

@@ -133,6 +133,7 @@ public class Router extends Device
 		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 
 		//look up dst mac
+		System.out.println("look up mac!");
 		ArpEntry arpEntry;
 		if(rtEntry.getGatewayAddress()==0){
 			arpEntry = arpCache.lookup(ipPkt.getDestinationAddress());
