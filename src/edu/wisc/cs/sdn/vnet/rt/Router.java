@@ -86,11 +86,8 @@ public class Router extends Device
                 etherPacket.toString().replace("\n", "\n\t"));
 		
 
-		/********************************************************************/
-		/* TODO: Handle packets                                             */
 		//check if IPv4 Packet, if not drop
 		if(etherPacket.getEtherType() != Ethernet.TYPE_IPv4){
-			System.out.println("Drop! type is not IPv4 "+etherPacket.getEtherType());
 			return;
 		}		
 
@@ -101,14 +98,12 @@ public class Router extends Device
 		byte[] data = ipPkt.serialize();
 		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 		if(receivedChecksum!=ipPkt.getChecksum()){
-			System.out.println("Drop! checksum not match");
 			return;
 		}
 
 		//decrement TTL drop if zero
 		byte ttl = ipPkt.getTtl();
 		if((int)ttl < 1){
-			System.out.println("Drop! ttl<1");
 			return;
 		}
 		ipPkt.setTtl((byte)(ttl -1));
@@ -116,7 +111,6 @@ public class Router extends Device
 		//check if ip equals one of the router's interface, if true then drop
 		for(Map.Entry<String,Iface> interfaceEntry: this.interfaces.entrySet()){
 			if(ipPkt.getDestinationAddress() == interfaceEntry.getValue().getIpAddress()){
-				System.out.println("Drop! dst ip == one of the router's interface");
 				return;
 			}
 		}
@@ -124,7 +118,6 @@ public class Router extends Device
 		//get forward routetable entry, if no entry matches, drop
 		RouteEntry rtEntry = routeTable.lookup(ipPkt.getDestinationAddress());
 		if(rtEntry == null){
-			System.out.println("Drop! no matching routing table entry");
 			return;
 		}
 
@@ -134,7 +127,6 @@ public class Router extends Device
 		ipPkt = (IPv4)ipPkt.deserialize(data, 0, data.length);
 
 		//look up dst mac
-		System.out.println("look up mac!");
 		ArpEntry arpEntry;
 		if(rtEntry.getGatewayAddress()==0){
 			arpEntry = arpCache.lookup(ipPkt.getDestinationAddress());
@@ -142,16 +134,11 @@ public class Router extends Device
 			arpEntry = arpCache.lookup(rtEntry.getGatewayAddress());
 		}
 		if(arpEntry!=null){
-			System.out.println("find arp entry!");
 			Ethernet forwardPkt = (Ethernet)etherPacket.setPayload(ipPkt);
 			String srcMac = rtEntry.getInterface().getMacAddress().toString();
-			System.out.println("Src MAC: "+srcMac);
 			String dstMac = arpEntry.getMac().toString();
-			System.out.println("Dst MAC: "+dstMac);
 			forwardPkt.setSourceMACAddress(srcMac);
 			forwardPkt.setDestinationMACAddress(dstMac);
-			System.out.println("Send pkt interface: "+rtEntry.getInterface().toString());
-			System.out.println("Packet: "+forwardPkt.toString());
 			sendPacket(forwardPkt, rtEntry.getInterface());
 		}
 		

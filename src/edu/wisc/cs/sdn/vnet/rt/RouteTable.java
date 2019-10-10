@@ -37,14 +37,12 @@ public class RouteTable
 	{
 		synchronized(this.entries)
         {
-			/*****************************************************************/
-			/* TODO: Find the route entry with the longest prefix match      */
+
 			if(this.entries == null){
 				return null;
 			}
 			RouteEntry result = null;
 			int maxMatch = 0;
-			System.out.println("entries in the router table:");
 			for (RouteEntry entry : this.entries){
 				int entryIP = entry.getDestinationAddress();
 				int subnetMask = entry.getMaskAddress();
@@ -59,7 +57,6 @@ public class RouteTable
 					if(curMatch>maxMatch){
 						maxMatch = curMatch;
 						result = entry;
-						System.out.println("find match router entry! "+subnetNum);
 					}
 
 				}
